@@ -17,7 +17,7 @@ type Context struct {
 
 type H map[string]interface{}
 
-func (c *Context) Param(key string) string {
+func (c *Context) Param(key string) string { // 获取路由参数，key 是参数名
 	value, _ := c.Params[key]
 	return value
 }
@@ -32,7 +32,7 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 }
 
 func (c *Context) PostForm(key string) string {
-	return c.Req.FormValue(key)
+	return c.Req.FormValue(key) // 获取表单参数
 }
 
 func (c *Context) Query(key string) string {
@@ -40,8 +40,8 @@ func (c *Context) Query(key string) string {
 }
 
 func (c *Context) Status(code int) {
-	c.StatusCode = code
-	c.Writer.WriteHeader(code)
+	c.StatusCode = code        // 记录响应状态码
+	c.Writer.WriteHeader(code) // 设置响应状态码
 }
 
 func (c *Context) SetHeader(key string, value string) {
@@ -61,7 +61,7 @@ func (c *Context) JSON(code int, obj interface{}) {
 	c.SetHeader("Content-Type", "application/json")
 	c.Status(code)
 	encoder := json.NewEncoder(c.Writer)
-	if err := encoder.Encode(obj); err != nil {
+	if err := encoder.Encode(obj); err != nil { // 将 obj 编码为 JSON 并写入响应体
 		http.Error(c.Writer, err.Error(), 500)
 	}
 }
