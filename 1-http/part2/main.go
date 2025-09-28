@@ -8,6 +8,7 @@ import (
 
 type Engine struct{}
 
+// ServeHTTP method makes Engine implement the http.Handler interface.
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	switch req.URL.Path {
 	case "/":

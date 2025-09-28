@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// main function starts an HTTP server and sets up route handlers.
 func main() {
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/hello", helloHandler)

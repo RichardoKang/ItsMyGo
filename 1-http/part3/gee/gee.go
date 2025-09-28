@@ -1,4 +1,4 @@
-package gee1
+package gee
 
 import (
 	"fmt"

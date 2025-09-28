@@ -6,9 +6,6 @@ import (
 	"net/http"
 )
 
-// ResponseWriter 字段：
-// Request 字段：
-
 type H map[string]interface{}
 
 type Context struct {
