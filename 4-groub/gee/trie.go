@@ -1,12 +1,19 @@
 package gee
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type node struct {
 	pattern  string // 待匹配的路由，例如 /p/:lang
 	part     string // 路由中的一部分，例如 :lang
 	children []*node
 	isWild   bool // 是否模糊匹配，part 含有 : 或 * 时为true
+}
+
+func (n *node) String() string {
+	return fmt.Sprintf("node{pattern=%s, part=%s, isWild=%t}", n.pattern, n.part, n.isWild)
 }
 
 // 寻找匹配的节点，如果有一致或者通配符的字段，则返回该节点
@@ -71,4 +78,13 @@ func (n *node) search(parts []string, height int) *node {
 		}
 	}
 	return nil
+}
+
+func (n *node) travel(list *([]*node)) {
+	if n.pattern != "" {
+		*list = append(*list, n)
+	}
+	for _, child := range n.children {
+		child.travel(list)
+	}
 }

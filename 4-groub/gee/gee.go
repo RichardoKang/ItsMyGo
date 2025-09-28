@@ -31,29 +31,29 @@ func New() *Engine {
 
 // Group is defined to create a new RouterGroup
 // remember all groups share the same Engine instance
-func (groub *RouterGroup) Group(prefix string) *RouterGroup {
-	engine := groub.engine
+func (group *RouterGroup) Group(prefix string) *RouterGroup {
+	engine := group.engine
 	newGroup := &RouterGroup{
-		parent: groub,
-		prefix: groub.prefix + prefix,
+		parent: group,
+		prefix: group.prefix + prefix,
 		engine: engine,
 	}
 	engine.groups = append(engine.groups, newGroup)
 	return newGroup
 }
 
-func (groub *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
-	pattern := groub.prefix + comp
+func (group *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
+	pattern := group.prefix + comp
 	log.Printf("Route %4s - %s", method, pattern)
-	groub.engine.router.addRoute(method, pattern, handler)
+	group.engine.router.addRoute(method, pattern, handler)
 }
 
-func (groub *RouterGroup) GET(pattern string, handler HandlerFunc) {
-	groub.addRoute("GET", pattern, handler)
+func (group *RouterGroup) GET(pattern string, handler HandlerFunc) {
+	group.addRoute("GET", pattern, handler)
 }
 
-func (groub *RouterGroup) POST(pattern string, handler HandlerFunc) {
-	groub.addRoute("POST", pattern, handler)
+func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
+	group.addRoute("POST", pattern, handler)
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
