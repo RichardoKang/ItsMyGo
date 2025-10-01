@@ -1,24 +1,23 @@
 package gee
 
 import (
-	"log"
 	"net/http"
+	"strings"
 )
 
-type HandlerFunc func(*Context)
-
 type (
+	HandlerFunc func(c *Context)
 	RouterGroup struct {
 		prefix      string
-		middlewares []HandlerFunc // support middleware
-		parent      *RouterGroup  // support nesting
-		engine      *Engine       // all groups share a Engine instance
+		middlewares []HandlerFunc
+		engine      *Engine
+		parent      *RouterGroup
 	}
 
 	Engine struct {
-		*RouterGroup                // 指向嵌套的 RouterGroup，作为根路由
-		router       *router        // 处理路由映射
-		groups       []*RouterGroup // store all groups
+		*RouterGroup
+		groups []*RouterGroup
+		router *router
 	}
 )
 
@@ -29,13 +28,11 @@ func New() *Engine {
 	return engine
 }
 
-// Group is defined to create a new RouterGroup
-// remember all groups share the same Engine instance
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := group.engine
 	newGroup := &RouterGroup{
-		parent: group,
 		prefix: group.prefix + prefix,
+		parent: group,
 		engine: engine,
 	}
 	engine.groups = append(engine.groups, newGroup)
@@ -44,7 +41,6 @@ func (group *RouterGroup) Group(prefix string) *RouterGroup {
 
 func (group *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
 	pattern := group.prefix + comp
-	log.Printf("Route %4s - %s", method, pattern)
 	group.engine.router.addRoute(method, pattern, handler)
 }
 
@@ -56,8 +52,19 @@ func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.addRoute("POST", pattern, handler)
 }
 
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
+}
+
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewares []HandlerFunc
+	for _, group := range engine.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
 	c := newContext(w, req)
+	c.handlers = middlewares
 	engine.router.handle(c)
 }
 
