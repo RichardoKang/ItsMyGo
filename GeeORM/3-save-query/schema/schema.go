@@ -57,11 +57,10 @@ func Parse(dest interface{}, d dialect.Dialect) *Schema {
 }
 
 func (schema *Schema) RecordValues(dest interface{}) []interface{} {
-	destValue := reflect.Indirect(reflect.ValueOf(dest)) //获取dest对象的值
+	destValue := reflect.Indirect(reflect.ValueOf(dest))
 	var fieldValues []interface{}
-	// 遍历schema的字段列表, 通过反射获取每个字段的值
 	for _, field := range schema.Fields {
-		fieldValues = append(fieldValues, destValue.FieldByName(field.Name).Interface()) // eg: User{Name: "Tom", Age: 18} -> []interface{}{"Tom", 18}
+		fieldValues = append(fieldValues, destValue.FieldByName(field.Name).Interface())
 	}
 	return fieldValues
 }

@@ -11,7 +11,7 @@ func (s *Session) Insert(values ...interface{}) (int64, error) {
 	for _, value := range values {
 		table := s.Model(value).RefTable()
 		s.clause.Set(clause.INSERT, table.Name, table.FieldNames) // 设置 INSERT 子句
-		recordValues = append(recordValues, table.RecordValues(value)...)
+		recordValues = append(recordValues, table.RecordValues(value))
 	}
 
 	s.clause.Set(clause.VALUES, recordValues...) // 设置 VALUES 子句
