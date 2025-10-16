@@ -5,8 +5,8 @@ import (
 	"reflect"
 )
 
-func (s *Session) Insert(values ...interface{}) (int64, error) {
-	recordValues := make([]interface{}, 0)
+func (s *Session) Insert(values ...any) (int64, error) {
+	recordValues := make([]any, 0)
 
 	for _, value := range values {
 		table := s.Model(value).RefTable()
@@ -23,7 +23,7 @@ func (s *Session) Insert(values ...interface{}) (int64, error) {
 	return result.RowsAffected() // 返回插入的记录数, nil
 }
 
-func (s *Session) Find(values interface{}) error {
+func (s *Session) Find(values any) error {
 	destSlice := reflect.Indirect(reflect.ValueOf(values))                // 获取切片的反射值
 	destType := destSlice.Type().Elem()                                   // 获取切片元素的类型
 	table := s.Model(reflect.New(destType).Elem().Interface()).RefTable() // 获取切片元素类型的表信息
@@ -38,7 +38,7 @@ func (s *Session) Find(values interface{}) error {
 	// 遍历结果集
 	for rows.Next() {
 		dest := reflect.New(destType).Elem() // 创建切片元素类型的实例
-		var values []interface{}
+		var values []any
 		for _, name := range table.FieldNames {
 			values = append(values, dest.FieldByName(name).Addr().Interface()) // 获取字段地址
 		}

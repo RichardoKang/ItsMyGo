@@ -15,9 +15,9 @@ func init() {
 	RegisterDialect("sqlite3", &sqlite3{})
 }
 
-func (s *sqlite3) TableExistsSQL(tableName string) (string, []interface{}) {
+func (s *sqlite3) TableExistsSQL(tableName string) (string, []any) {
 
-	args := []interface{}{tableName}
+	args := []any{tableName}
 	return "SELECT name FROM sqlite_master WHERE type='table' and name = ?", args
 
 }
@@ -47,7 +47,7 @@ func (s *sqlite3) DataTypeOf(typ reflect.Value) string {
 	return ""
 }
 
-func (s *sqlite3) TableExistSQL(tableName string) (string, []interface{}) {
-	args := []interface{}{tableName}
+func (s *sqlite3) TableExistSQL(tableName string) (string, []any) {
+	args := []any{tableName}
 	return "SELECT name FROM sqlite_master WHERE type='table' and name = ?", args
 }

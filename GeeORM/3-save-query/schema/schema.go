@@ -15,7 +15,7 @@ type Field struct {
 
 // Schema 代表一个对象的结构化信息
 type Schema struct {
-	Model      interface{}
+	Model      any
 	Name       string
 	Fields     []*Field
 	FieldNames []string
@@ -27,7 +27,7 @@ func (s *Schema) GetField(name string) *Field {
 	return s.fieldMap[name]
 }
 
-func Parse(dest interface{}, d dialect.Dialect) *Schema {
+func Parse(dest any, d dialect.Dialect) *Schema {
 	modelType := reflect.Indirect(reflect.ValueOf(dest)).Type()
 	schema := &Schema{
 		Model:    dest,
@@ -56,9 +56,9 @@ func Parse(dest interface{}, d dialect.Dialect) *Schema {
 	return schema
 }
 
-func (schema *Schema) RecordValues(dest interface{}) []interface{} {
+func (schema *Schema) RecordValues(dest any) []any {
 	destValue := reflect.Indirect(reflect.ValueOf(dest))
-	var fieldValues []interface{}
+	var fieldValues []any
 	for _, field := range schema.Fields {
 		fieldValues = append(fieldValues, destValue.FieldByName(field.Name).Interface())
 	}
